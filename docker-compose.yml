@@ -1,0 +1,39 @@
+version: '2'
+services:
+  nodebb:
+    #image: vimagick/nodebb
+    build: . 
+    ports:
+      - "4567:4567"
+    links:
+      - redis
+    volumes:
+      #  - ./data:/var/lib/nodebb
+        #- ./NodeBB/src:/usr/src/nodebb/src
+        #- /usr/src/nodebb/build
+        #- /usr/src/nodebb/node_modules
+        #- /usr/src/nodebb/public/uploads
+      - ./nodebb-theme-cd-persona:/usr/src/app/node_modules/nodebb-theme-cd-persona
+      - ./nodebb-plugin-sso-coderdojo:/usr/src/app/node_modules/nodebb-plugin-sso-coderdojo
+      - ./nodebb-plugin-write-api:/usr/src/app/node_modules/nodebb-plugin-write-api
+      - ./build:/usr/src/app/build
+    environment:
+      - INTERNAL_ZEN_URL=http://zen
+    networks:
+      - cplocaldevelopment_default
+    depends_on:
+      - redis
+    restart: always
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - ./data:/data
+    networks:
+      - cplocaldevelopment_default
+    restart: always
+networks:
+  cplocaldevelopment_default:
+    external: true
